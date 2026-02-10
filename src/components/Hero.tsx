@@ -45,7 +45,7 @@ const Hero = ({ onDemoClick }: HeroProps) => {
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                             </span>
-                            <span className="text-xs font-bold tracking-wide uppercase text-primary">v2.0 Now Live</span>
+                            <span className="text-xs font-bold tracking-wide uppercase text-primary">v1.0 Now Live</span>
                         </div>
                         <h1 className="font-serif text-5xl lg:text-7xl leading-[1.1] font-bold mb-6 text-text-main-light dark:text-white tracking-tight">
                             Handwritten Exams. <br />
@@ -66,14 +66,6 @@ const Hero = ({ onDemoClick }: HeroProps) => {
                                 <PlayCircle className="w-5 h-5 text-primary" />
                                 Watch Demo
                             </button>
-                        </div>
-                        <div className="mt-10 flex items-center justify-center lg:justify-start gap-4 text-sm text-text-sub-light dark:text-text-sub-dark">
-                            <div className="flex -space-x-2">
-                                <img alt="" className="inline-block h-8 w-8 rounded-full ring-2 ring-background-light dark:ring-background-dark grayscale opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMI3Y3s51dn--Gw_fMRBg4i8s-wGtChIYYW49cIpwUlcuukIO3fRc5MkjRJS93IghXRYZCzdkxndkTtpqX9ozELwKWkJ6I-UvT89Pw_KW6ZprNL3_SeaXvbkjyXsEYBmINZlUwvF1rSL_rButB6oUxcc5Edzj-3hIp8u_JluTrF-uf1Pd_pIJub2g9kvIvV4rPVDCsCTo9yhhLUMdNY6UUWkQHqPU1J9KE_0GiW88cL4Y_kJXxnYV1aRBTe0mh5kmYXhg9r_q7HsI" />
-                                <img alt="" className="inline-block h-8 w-8 rounded-full ring-2 ring-background-light dark:ring-background-dark grayscale opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3nJoAbvTcLuJWXahcvukX5O2YnMgO1FVTA3qMz4wSjStvgTNk_SkhAvBB8I3AWRjMOs9imX4WeqfWiKBs4-RhY9FwbAjcn3xyBk9erzb3IOfFEKveTRCQtryEzDiHpGNlGCcFvrolCrqCFuVugKci1EAo0c2_G5ZRZIouQ29w3BAqIplyo_fmfw3uLRu2nKBEHABt2PlszyrF1kcuoHg_hEpgCBV5QR0yt2GYFy_H_1CW4igEZ-hGA2RKv97kFZuQxTta-OlGfuI" />
-                                <img alt="" className="inline-block h-8 w-8 rounded-full ring-2 ring-background-light dark:ring-background-dark grayscale opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8Zb8_vMvL3FXcF9jnV8WMtnKl3BKQh7kWNC8gCBaSuEFpkL5GU_MGGmMUcHmQSovNUviPaJLE2mkJiaYD7j7a4b8ZQBLy7O7UH2_Itz9r99wDcd2WrpIvVH9DAiqh0fBfVWbYjNGmELzBXqGz3P0BVa4_9_rB_WXSppOJJM41Q1lTYIGFHzK8fkXs-52NT0YoLguN8M-ZvdD9GY80XYP_G58MoGPKkRs_QzhFctr_PQF5-qpl_no6pRg2o4RyAT7l3i9LGtwbFeM" />
-                            </div>
-                            <p>Trusted by 12,000+ educators</p>
                         </div>
                     </motion.div>
 
