@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>IntiGrade - AI Grading Prototype</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Inter:wght@300;400;500;600&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#6366f1", // Modern Indigo
+                        "primary-hover": "#4f46e5",
+                        "primary-dark": "#4338ca",
+                        "secondary": "#a855f7", // Purple accent
+
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "text-main-light": "#1e293b",
+                        "text-main-dark": "#f1f5f9",
+                        "text-sub-light": "#64748b",
+                        "text-sub-dark": "#94a3b8",
+                        "sage-light": "#8FBC8F",
+                        "sage-faint": "#E8F5E9",
+                    },
+                    fontFamily: {
+                        serif: ["'Playfair Display'", "serif"],
+                        sans: ["'Public Sans'", "'Manrope'", "'Inter'", "sans-serif"],
+                    },
+                    backgroundImage: {
+                        'paper-texture': "url('https://www.transparenttextures.com/patterns/cream-paper.png')",
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    },
+                    animation: {
+                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                        'fade-in': 'fadeIn 1.2s ease-out forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'flow-down': 'flowDown 2s linear infinite',
+                        'scroll': 'scroll 30s linear infinite',
+                        'scale-in': 'scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            from: { opacity: 0, transform: 'translateY(30px)' },
+                            to: { opacity: 1, transform: 'translateY(0)' }
+                        },
+                        fadeIn: {
+                            from: { opacity: 0 },
+                            to: { opacity: 1 }
+                        },
+                        scaleIn: {
+                            from: { opacity: 0, transform: 'scale(0.9)' },
+                            to: { opacity: 1, transform: 'scale(1)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        flowDown: {
+                            '0%': { transform: 'translateY(-100%)', opacity: '0' },
+                            '50%': { opacity: '0.5' },
+                            '100%': { transform: 'translateY(100%)', opacity: '0' },
+                        },
+                        scroll: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-50%)' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap');
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .dark .noise-overlay {
+            opacity: 0.05;
+            filter: invert(1);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .glass-nav {
+            background: rgba(26, 26, 26, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .bg-texture-light {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .dark .bg-texture-dark {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .animate-delay-100 {
+            animation-delay: 0.1s;
+        }
+
+        .animate-delay-200 {
+            animation-delay: 0.2s;
+        }
+
+        .animate-delay-300 {
+            animation-delay: 0.3s;
+        }
+
+        /* Smooth scrolling for waterfall */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(40px) scale(0.98);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            filter: blur(4px);
+        }
+
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
+
+        .parallax-bg {
+            transition: transform 0.1s linear;
+        }
+
+        /* Parallax container utilities */
+        .parallax-wrapper {
+            perspective: 1px;
+            height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .parallax-group {
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        /* Custom scrollbar hide */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+
+    <!-- React Dependencies -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-300 min-h-screen relative font-sans antialiased selection:bg-primary selection:text-white">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+
+        // --- Shared Hooks & Components ---
+
+        const useScrollReveal = () => {
+            useEffect(() => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el));
+
+                return () => observer.disconnect();
+            }, []);
+        };
+
+        const useParallax = () => {
+            useEffect(() => {
+                const handleScroll = () => {
+                    const scrolled = window.scrollY;
+                    document.querySelectorAll('.parallax-bg').forEach(el => {
+                        const speed = el.getAttribute('data-speed') || 0.5;
+                        el.style.transform = `translateY(${scrolled * speed}px)`;
+                    });
+                };
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+        };
+
+        const NoiseOverlay = () => (
+            <div className="noise-overlay"></div>
+        );
+
+        const Navigation = ({ variant = 'default' }) => {
+            if (variant === 'process') {
+                return (
+                    <nav className="w-full px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+                        <div className="flex items-center gap-3">
+                            <Link to="/" className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-primary flex items-center justify-center rounded-lg">
+                                    <span className="text-white font-bold text-xs tracking-tighter">iG</span>
+                                </div>
+                                <span className="font-serif text-xl font-bold tracking-tight text-charcoal dark:text-white">IntiGrade</span>
+                            </Link>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">Home</Link>
+                            <button className="bg-primary hover:bg-primary-dark text-white px-5 py-2 rounded-lg font-medium text-sm transition-all shadow-lg hover:shadow-xl">
+                                Get Started
+                            </button>
+                        </div>
+                    </nav>
+                );
+            }
+
+            return (
+                <nav className="glass-nav fixed w-full top-0 z-40 transition-all duration-300">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between items-center h-20">
+                            <Link to="/" className="flex-shrink-0 flex items-center gap-3">
+                                <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-lg shadow-lg shadow-primary/30">
+                                    <span className="material-icons text-white">grade</span>
+                                </div>
+                                <span className="font-serif text-2xl font-bold tracking-tight text-text-main-light dark:text-white">IntiGrade</span>
+                            </Link>
+                            <div className="hidden md:flex space-x-8 items-center">
+                                <Link className="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium" to="/process">Process</Link>
+                                <a className="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium" href="#">Features</a>
+                                <a className="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium" href="#">Pricing</a>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                                <button className="hidden md:block text-text-main-light dark:text-white hover:text-primary font-medium text-sm transition-colors">Log in</button>
+                                <Link to="/process" className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40">
+                                    Start Free Trial
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        };
+
+        // --- Screen 1: Home Page ---
+
+        const HomePage = () => {
+            useScrollReveal();
+            useParallax();
+
+            return (
+                <div className="min-h-screen">
+                    <NoiseOverlay />
+                    <Navigation variant="default" />
+
+                    <main className="relative overflow-hidden">
+                        {/* Hero Section */}
+                        <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 z-10">
+                            {/* Background Blobs - Parallaxed */}
+                            <div data-speed="0.2" className="parallax-bg absolute top-0 left-0 -translate-x-1/4 -translate-y-1/2 w-[1000px] h-[1000px] bg-gradient-radial from-primary/20 via-primary/5 to-transparent rounded-full blur-[100px] pointer-events-none mix-blend-multiply dark:mix-blend-screen"></div>
+                            <div data-speed="0.4" className="parallax-bg absolute top-1/2 right-0 translate-x-1/4 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-secondary/20 via-secondary/5 to-transparent rounded-full blur-[80px] pointer-events-none mix-blend-multiply dark:mix-blend-screen"></div>
+
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+
+                                    {/* Left Content */}
+                                    <div className="text-center lg:text-left animate-fade-up">
+                                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/80 dark:bg-surface-dark/80 border border-primary/20 mb-8 backdrop-blur-md shadow-sm hover:shadow-md transition-shadow cursor-default">
+                                            <span className="flex h-2 w-2 relative mr-2">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                                            </span>
+                                            <span className="text-xs font-bold tracking-wide uppercase text-primary">v2.0 Now Live</span>
+                                        </div>
+                                        <h1 className="font-serif text-5xl lg:text-7xl leading-[1.1] font-bold mb-6 text-text-main-light dark:text-white tracking-tight">
+                                            Handwritten Exams. <br />
+                                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary italic pr-2">Digitally Perfected.</span>
+                                        </h1>
+                                        <p className="text-lg lg:text-xl text-text-sub-light dark:text-text-sub-dark mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-light">
+                                            The AI grading assistant that bridges the gap between pen and paper. IntiGrade scans, analyzes, and grades physical tests instantly, giving teachers their weekends back.
+                                        </p>
+                                        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                                            <Link to="/process" className="group bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-lg text-base font-medium transition-all shadow-xl shadow-primary/25 hover:shadow-primary/40 flex items-center justify-center gap-2">
+                                                Grade Your First Exam
+                                                <span className="material-icons text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                            </Link>
+                                            <button className="group px-8 py-4 rounded-lg text-text-main-light dark:text-white border border-gray-300 dark:border-gray-600 hover:border-primary dark:hover:border-primary hover:text-primary dark:hover:text-primary transition-all flex items-center justify-center gap-2 bg-white/50 dark:bg-black/20 backdrop-blur-sm">
+                                                <span className="material-icons text-primary text-xl">play_circle_outline</span>
+                                                Watch Demo
+                                            </button>
+                                        </div>
+                                        <div className="mt-10 flex items-center justify-center lg:justify-start gap-4 text-sm text-text-sub-light dark:text-text-sub-dark">
+                                            <div className="flex -space-x-2">
+                                                <img alt="" className="inline-block h-8 w-8 rounded-full ring-2 ring-background-light dark:ring-background-dark grayscale opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMI3Y3s51dn--Gw_fMRBg4i8s-wGtChIYYW49cIpwUlcuukIO3fRc5MkjRJS93IghXRYZCzdkxndkTtpqX9ozELwKWkJ6I-UvT89Pw_KW6ZprNL3_SeaXvbkjyXsEYBmINZlUwvF1rSL_rButB6oUxcc5Edzj-3hIp8u_JluTrF-uf1Pd_pIJub2g9kvIvV4rPVDCsCTo9yhhLUMdNY6UUWkQHqPU1J9KE_0GiW88cL4Y_kJXxnYV1aRBTe0mh5kmYXhg9r_q7HsI" />
+                                                <img alt="" className="inline-block h-8 w-8 rounded-full ring-2 ring-background-light dark:ring-background-dark grayscale opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3nJoAbvTcLuJWXahcvukX5O2YnMgO1FVTA3qMz4wSjStvgTNk_SkhAvBB8I3AWRjMOs9imX4WeqfWiKBs4-RhY9FwbAjcn3xyBk9erzb3IOfFEKveTRCQtryEzDiHpGNlGCcFvrolCrqCFuVugKci1EAo0c2_G5ZRZIouQ29w3BAqIplyo_fmfw3uLRu2nKBEHABt2PlszyrF1kcuoHg_hEpgCBV5QR0yt2GYFy_H_1CW4igEZ-hGA2RKv97kFZuQxTta-OlGfuI" />
+                                                <img alt="" className="inline-block h-8 w-8 rounded-full ring-2 ring-background-light dark:ring-background-dark grayscale opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8Zb8_vMvL3FXcF9jnV8WMtnKl3BKQh7kWNC8gCBaSuEFpkL5GU_MGGmMUcHmQSovNUviPaJLE2mkJiaYD7j7a4b8ZQBLy7O7UH2_Itz9r99wDcd2WrpIvVH9DAiqh0fBfVWbYjNGmELzBXqGz3P0BVa4_9_rB_WXSppOJJM41Q1lTYIGFHzK8fkXs-52NT0YoLguN8M-ZvdD9GY80XYP_G58MoGPKkRs_QzhFctr_PQF5-qpl_no6pRg2o4RyAT7l3i9LGtwbFeM" />
+                                            </div>
+                                            <p>Trusted by 12,000+ educators</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Right Content - Interactive Hero Graphic */}
+                                    <div className="relative animate-fade-up animate-delay-200 lg:h-[600px] flex items-center justify-center">
+                                        <svg className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120%] h-full z-20 pointer-events-none opacity-40 dark:opacity-20" fill="none" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M50 350C100 350 100 50 200 50C300 50 300 350 350 350" stroke="currentColor" className="text-primary" strokeDasharray="8 8" strokeWidth="2"></path>
+                                        </svg>
+                                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent dark:from-primary/20 rounded-[3rem] transform rotate-3 scale-95 -z-10 opacity-50 blur-2xl"></div>
+
+                                        <div className="relative w-full aspect-square lg:aspect-auto lg:h-full">
+                                            {/* Paper Graphic */}
+                                            <div className="absolute bottom-0 left-0 w-3/4 z-10 transform -rotate-3 transition-transform hover:-rotate-1 duration-500 origin-bottom-left">
+                                                <div className="bg-[#Fdfbf7] p-6 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden">
+                                                    <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/lined-paper-2.png')]"></div>
+                                                    <div className="space-y-4 font-serif text-gray-800 opacity-80 relative">
+                                                        <div className="flex justify-between border-b border-gray-300 pb-2 mb-4">
+                                                            <span className="text-sm">Name: Alex Student</span>
+                                                            <span className="text-sm">Date: Oct 12</span>
+                                                        </div>
+                                                        <div className="h-4 w-3/4 bg-gray-300 rounded animate-pulse"></div>
+                                                        <div className="h-4 w-1/2 bg-gray-300 rounded animate-pulse"></div>
+                                                        <div className="pt-4">
+                                                            <p className="font-handwriting text-2xl text-blue-900 transform -rotate-2" style={{ fontFamily: "'Brush Script MT', cursive" }}>x = 24</p>
+                                                        </div>
+                                                        <div className="absolute top-10 right-4 w-16 h-16 border-4 border-red-500 rounded-full flex items-center justify-center transform rotate-12 opacity-0 animate-fade-up animate-delay-300" style={{ animationFillMode: 'forwards' }}>
+                                                            <span className="text-red-500 font-bold text-2xl">A-</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Analysis Card */}
+                                            <div className="absolute top-10 right-0 w-3/4 z-30 transform translate-y-8 lg:translate-y-0 hover:-translate-y-2 transition-transform duration-500">
+                                                <div className="bg-white dark:bg-surface-dark rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] border border-gray-100 dark:border-gray-700 overflow-hidden backdrop-blur-xl">
+                                                    <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                                                        <div className="flex gap-2">
+                                                            <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                                                            <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                                                            <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                                                        </div>
+                                                        <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Analysis Complete</div>
+                                                    </div>
+                                                    <div className="p-6">
+                                                        <div className="flex items-center justify-between mb-6">
+                                                            <div>
+                                                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Calculus 101</h3>
+                                                                <p className="text-xs text-gray-500">Section B • 24 Papers</p>
+                                                            </div>
+                                                            <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-bold">
+                                                                100% Graded
+                                                            </div>
+                                                        </div>
+                                                        <div className="grid grid-cols-2 gap-4 mb-6">
+                                                            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                                                                <p className="text-xs text-gray-500 mb-1">Average Score</p>
+                                                                <p className="text-xl font-bold text-primary">84%</p>
+                                                            </div>
+                                                            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                                                                <p className="text-xs text-gray-500 mb-1">Time Saved</p>
+                                                                <p className="text-xl font-bold text-primary">4h 12m</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="space-y-3">
+                                                            <div className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
+                                                                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">AS</div>
+                                                                <div className="flex-1">
+                                                                    <p className="text-sm font-medium text-gray-900 dark:text-gray-200">Alex Student</p>
+                                                                    <p className="text-xs text-gray-400">Question 3 needs review</p>
+                                                                </div>
+                                                                <span className="text-sm font-bold text-gray-700 dark:text-gray-300">92/100</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
+                                                                <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold text-xs">JD</div>
+                                                                <div className="flex-1">
+                                                                    <p className="text-sm font-medium text-gray-900 dark:text-gray-200">Jane Doe</p>
+                                                                    <p className="text-xs text-gray-400">Perfect Score</p>
+                                                                </div>
+                                                                <span className="text-sm font-bold text-gray-700 dark:text-gray-300">100/100</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="absolute top-1/2 left-1/2 w-32 h-32 border-t-2 border-r-2 border-primary/30 rounded-tr-[50px] -translate-x-4 translate-y-4 z-20"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-12 border-t border-gray-200 dark:border-gray-800 pt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-up animate-delay-300">
+                                <p className="text-center text-sm font-medium text-text-sub-light dark:text-text-sub-dark mb-8 uppercase tracking-widest opacity-60">Seamlessly integrates with</p>
+
+                                {/* Marquee/Infinite Scroll for Logos */}
+                                <div className="overflow-hidden w-full relative group">
+                                    <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background-light dark:from-background-dark to-transparent z-10"></div>
+                                    <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background-light dark:from-background-dark to-transparent z-10"></div>
+
+                                    <div className="flex whitespace-nowrap animate-scroll hover:[animation-play-state:paused] w-max">
+                                        {[...Array(3)].map((_, setIndex) => (
+                                            <div key={setIndex} className="flex gap-20 mx-10 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                                                <div className="flex items-center gap-2 text-xl font-bold font-sans text-gray-600 dark:text-gray-400"><span className="material-icons">school</span> Canvas</div>
+                                                <div className="flex items-center gap-2 text-xl font-bold font-sans text-gray-600 dark:text-gray-400"><span className="material-icons">class</span> Blackboard</div>
+                                                <div className="flex items-center gap-2 text-xl font-bold font-sans text-gray-600 dark:text-gray-400"><span className="material-icons">grid_view</span> Moodle</div>
+                                                <div className="flex items-center gap-2 text-xl font-bold font-sans text-gray-600 dark:text-gray-400"><span className="material-icons">folder_shared</span> Google Classroom</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* NEW: Waterfall Transition Section */}
+                        <section className="relative py-24 bg-gradient-to-b from-transparent to-white dark:to-surface-dark z-20 overflow-hidden">
+                            {/* Parallax Elements */}
+                            <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 dark:bg-primary/10 rounded-l-[100px] transform translate-x-1/4 -skew-y-6 z-0 pointer-events-none"></div>
+
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                                <div className="flex flex-col items-center mb-16">
+                                    <span className="material-icons text-4xl text-primary animate-bounce">keyboard_double_arrow_down</span>
+                                    <h2 className="mt-4 font-serif text-3xl md:text-4xl font-bold text-center text-text-main-light dark:text-white reveal-on-scroll">
+                                        The Flow of Intelligence
+                                    </h2>
+                                    <p className="mt-4 text-center text-lg text-text-sub-light dark:text-text-sub-dark max-w-2xl reveal-on-scroll delay-100">
+                                        Watch how static paper transforms into fluid data streams.
+                                    </p>
+                                </div>
+
+                                {/* Waterfall Cards */}
+                                <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                                    {/* Connecting Line */}
+                                    <div className="hidden lg:block absolute top-12 left-[12%] right-[12%] h-0.5 bg-gray-200 dark:bg-gray-700 -z-10">
+                                        <div className="absolute top-0 left-0 h-full w-full bg-primary/50 origin-left animate-[scaleX_3s_ease-in-out_infinite]"></div>
+                                    </div>
+
+                                    {[
+                                        { icon: "upload_file", title: "Upload", desc: "Drag & drop batches", delay: "0s" },
+                                        { icon: "document_scanner", title: "Scan", desc: "AI visual recognition", delay: "0.2s" },
+                                        { icon: "psychology", title: "Analyze", desc: "Contextual understanding", delay: "0.4s" },
+                                        { icon: "insights", title: "Insight", desc: "Actionable metrics", delay: "0.6s" }
+                                    ].map((step, idx) => (
+                                        <div key={idx} className="reveal-on-scroll group" style={{ transitionDelay: step.delay }}>
+                                            <div className="bg-white dark:bg-surface-dark p-8 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+                                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+
+                                                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6 mx-auto group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                                                    <span className="material-icons text-2xl text-primary group-hover:text-white transition-colors">{step.icon}</span>
+                                                </div>
+                                                <h3 className="font-bold text-xl text-center mb-2 dark:text-white">{step.title}</h3>
+                                                <p className="text-center text-sm text-text-sub-light dark:text-text-sub-dark">{step.desc}</p>
+                                            </div>
+                                            {/* Mobile connector line */}
+                                            {idx !== 3 && (
+                                                <div className="lg:hidden w-0.5 h-8 bg-gray-200 dark:bg-gray-700 mx-auto my-2"></div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Features Section - Now seamlessly connected */}
+                        <section className="py-24 bg-white dark:bg-surface-dark relative z-10 border-t border-gray-100 dark:border-gray-800">
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                <div className="text-center max-w-3xl mx-auto mb-16 reveal-on-scroll">
+                                    <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4 text-text-main-light dark:text-white">Everything you need to grade smarter</h2>
+                                    <p className="text-text-sub-light dark:text-text-sub-dark text-lg">IntiGrade isn't just a scanner. It's a complete grading assistant that learns your style.</p>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    {[
+                                        {
+                                            icon: "auto_fix_high",
+                                            title: "AI Handwriting Recognition",
+                                            desc: "Our engine deciphers even the messiest student handwriting with 99.8% accuracy, trained on millions of exam papers."
+                                        },
+                                        {
+                                            icon: "analytics",
+                                            title: "Instant Analytics",
+                                            desc: "Spot class-wide learning gaps instantly. See which questions were missed most often and adjust your teaching in real-time."
+                                        },
+                                        {
+                                            icon: "integration_instructions",
+                                            title: "LMS Sync",
+                                            desc: "Grades are automatically pushed to Canvas, Blackboard, or Google Classroom. No more manual data entry errors."
+                                        }
+                                    ].map((feature, idx) => (
+                                        <div key={idx} className="reveal-on-scroll p-8 rounded-2xl bg-gray-50 dark:bg-background-dark border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:border-primary/30 transition-all duration-300 group">
+                                            <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                                <span className="material-icons text-primary text-3xl">{feature.icon}</span>
+                                            </div>
+                                            <h3 className="font-serif text-xl font-bold mb-3 text-text-main-light dark:text-white">{feature.title}</h3>
+                                            <p className="text-text-sub-light dark:text-text-sub-dark leading-relaxed">{feature.desc}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Testimonial Section */}
+                        <section className="py-24 bg-background-light dark:bg-background-dark relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 transform origin-top translate-x-1/2"></div>
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                                <div className="reveal-on-scroll bg-white dark:bg-surface-dark rounded-3xl p-8 md:p-16 shadow-2xl border border-gray-100 dark:border-gray-800 flex flex-col md:flex-row items-center gap-12">
+                                    <div className="md:w-1/3 flex justify-center">
+                                        <div className="relative">
+                                            <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-white dark:border-gray-700 shadow-lg">
+                                                <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Sarah Jenkins" className="w-full h-full object-cover" />
+                                            </div>
+                                            <div className="absolute -bottom-4 -right-4 bg-primary text-white p-3 rounded-full shadow-lg">
+                                                <span className="material-icons">format_quote</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="md:w-2/3 text-center md:text-left">
+                                        <div className="flex items-center justify-center md:justify-start mb-4 gap-1">
+                                            {[1, 2, 3, 4, 5].map(s => <span key={s} className="material-icons text-yellow-400">star</span>)}
+                                        </div>
+                                        <h3 className="font-serif text-2xl md:text-3xl font-medium mb-6 text-text-main-light dark:text-white italic">
+                                            "I used to spend my entire Sunday grading calculus exams. With IntiGrade, I'm done by Friday afternoon. It's not just a tool; it gave me my weekends back."
+                                        </h3>
+                                        <div>
+                                            <p className="font-bold text-lg text-text-main-light dark:text-white">Sarah Jenkins</p>
+                                            <p className="text-text-sub-light dark:text-text-sub-dark">AP Math Teacher, Westview High</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* CTA Section */}
+                        <section className="py-24 bg-surface-dark dark:bg-black relative overflow-hidden">
+                            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                            <div className="max-w-4xl mx-auto px-4 relative z-10 text-center reveal-on-scroll">
+                                <h2 className="font-serif text-4xl md:text-5xl font-bold text-white mb-6">Ready to stop grading manually?</h2>
+                                <p className="text-gray-400 text-xl mb-10 max-w-2xl mx-auto">Join 12,000+ educators who have graded over 5 million exams with IntiGrade.</p>
+                                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                    <Link to="/process" className="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-lg text-lg font-bold transition-all transform hover:scale-105 shadow-lg shadow-primary/25">
+                                        Start Your Free Trial
+                                    </Link>
+                                    <button className="px-8 py-4 rounded-lg text-white border border-gray-600 hover:bg-white/10 transition-all font-medium">
+                                        Schedule a Demo
+                                    </button>
+                                </div>
+                                <p className="mt-6 text-sm text-gray-500">No credit card required. 14-day free trial.</p>
+                            </div>
+                        </section>
+                    </main>
+                </div>
+            );
+        };
+
+        // --- Screen 2: Process Waterfall ---
+
+        const ProcessPage = () => {
+            return (
+                <div className="bg-texture-light dark:bg-texture-dark min-h-screen flex flex-col font-sans text-charcoal dark:text-gray-200 transition-colors duration-300">
+                    <Navigation variant="process" />
+
+                    <main className="flex-grow relative overflow-hidden flex flex-col items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+                        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 dark:bg-primary/5 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
+
+                        <div className="text-center max-w-3xl mb-16 relative z-10">
+                            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-medium mb-6 text-charcoal dark:text-white leading-tight">
+                                The Kinetic <span className="text-primary italic">Process</span>
+                            </h2>
+                            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 font-light max-w-2xl mx-auto">
+                                From physical paper to digital insight in seconds. Experience the seamless flow of intelligent grading.
+                            </p>
+                        </div>
+
+                        <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center gap-8">
+
+                            {/* Step 1: Scan */}
+                            <div className="relative group z-20">
+                                <div className="absolute -inset-1 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                                <div className="relative bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 p-8 rounded-2xl shadow-soft flex flex-col items-center w-64 text-center transform hover:-translate-y-1 transition-transform duration-300">
+                                    <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4 text-primary">
+                                        <span className="material-icons-round text-3xl">document_scanner</span>
+                                    </div>
+                                    <h3 className="font-serif text-xl font-semibold mb-2 text-charcoal dark:text-white">Scan Papers</h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">Upload in bulk via app or scanner integration.</p>
+                                </div>
+                            </div>
+
+                            {/* Connector 1 */}
+                            <div className="h-24 w-px relative overflow-hidden">
+                                <div className="absolute inset-0 w-px bg-gray-300 dark:bg-gray-700"></div>
+                                <div className="absolute inset-0 w-px bg-primary/60 animate-flow-down"></div>
+                            </div>
+
+                            {/* Step 2: Processing (Animated) */}
+                            <div className="relative z-20 animate-float">
+                                <div className="absolute inset-0 rounded-full border border-primary/20 scale-150 animate-pulse-slow"></div>
+                                <div className="absolute inset-0 rounded-full border border-primary/10 scale-[1.8]"></div>
+                                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900 border border-primary/30 shadow-[0_0_40px_rgba(23,207,161,0.25)] flex flex-col items-center justify-center relative overflow-hidden backdrop-blur-sm">
+                                    <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10"></div>
+                                    <span className="material-icons-round text-primary text-5xl md:text-6xl relative z-10">auto_awesome</span>
+                                    <span className="absolute bottom-6 text-[10px] font-bold uppercase tracking-widest text-primary/80">Processing</span>
+                                </div>
+                            </div>
+
+                            {/* Connector 2 (Branching) */}
+                            <div className="h-24 w-full max-w-[600px] relative flex justify-center">
+                                <div className="h-full w-px bg-gray-300 dark:bg-gray-700 relative overflow-hidden">
+                                    <div className="absolute inset-0 w-px bg-primary/60 animate-flow-down" style={{ animationDelay: '0.5s' }}></div>
+                                </div>
+                                <svg className="absolute top-0 w-full h-full pointer-events-none text-gray-300 dark:text-gray-700" preserveAspectRatio="none">
+                                    <path d="M300,0 C300,40 100,40 100,100" fill="none" stroke="currentColor" strokeDasharray="4 4" strokeWidth="1" vectorEffect="non-scaling-stroke"></path>
+                                    <path d="M300,0 C300,40 500,40 500,100" fill="none" stroke="currentColor" strokeDasharray="4 4" strokeWidth="1" vectorEffect="non-scaling-stroke"></path>
+                                </svg>
+                            </div>
+
+                            {/* Step 3: Outputs */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl px-4">
+                                {/* Card 1 */}
+                                <div className="bg-surface-light dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 group">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2 bg-sage-faint dark:bg-primary/20 rounded-lg text-primary">
+                                            <span className="material-icons-round text-xl">assignment_turned_in</span>
+                                        </div>
+                                        <h4 className="font-serif font-semibold text-lg text-charcoal dark:text-gray-100">Graded Paper</h4>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <div className="h-2 w-3/4 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"></div>
+                                        <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded animate-pulse delay-75"></div>
+                                        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                                            <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded">A-</span>
+                                            <span className="text-xs text-gray-500 dark:text-gray-400">92% Accuracy</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Card 2 */}
+                                <div className="bg-surface-light dark:bg-surface-dark rounded-xl border border-primary/30 dark:border-primary/40 p-6 shadow-md relative overflow-hidden transform hover:-translate-y-2 transition-all duration-300">
+                                    <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 rounded-bl-full -mr-8 -mt-8"></div>
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2 bg-sage-faint dark:bg-primary/20 rounded-lg text-primary">
+                                            <span className="material-icons-round text-xl">rate_review</span>
+                                        </div>
+                                        <h4 className="font-serif font-semibold text-lg text-charcoal dark:text-gray-100">Student Feedback</h4>
+                                    </div>
+                                    <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                                        <p className="italic">"Great analysis of the historical context, Sarah. Consider expanding on..."</p>
+                                        <div className="flex items-center gap-2 mt-3">
+                                            <div className="h-6 w-6 rounded-full bg-gray-200 dark:bg-gray-600"></div>
+                                            <span className="text-xs text-gray-500">Generated in 2.4s</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Card 3 */}
+                                <div className="bg-surface-light dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 group">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2 bg-sage-faint dark:bg-primary/20 rounded-lg text-primary">
+                                            <span className="material-icons-round text-xl">analytics</span>
+                                        </div>
+                                        <h4 className="font-serif font-semibold text-lg text-charcoal dark:text-gray-100">Class Analytics</h4>
+                                    </div>
+                                    <div className="flex items-end justify-between h-16 gap-2 mt-2 px-2">
+                                        <div className="w-full bg-primary/20 dark:bg-primary/10 rounded-t-sm h-[40%] group-hover:h-[50%] transition-all duration-500"></div>
+                                        <div className="w-full bg-primary/40 dark:bg-primary/30 rounded-t-sm h-[70%] group-hover:h-[85%] transition-all duration-500"></div>
+                                        <div className="w-full bg-primary rounded-t-sm h-[60%] group-hover:h-[65%] transition-all duration-500"></div>
+                                        <div className="w-full bg-primary/30 dark:bg-primary/20 rounded-t-sm h-[50%] group-hover:h-[55%] transition-all duration-500"></div>
+                                    </div>
+                                    <div className="mt-3 flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                                        <span>Avg: 88%</span>
+                                        <span>Trend: <span className="text-primary">▲ 4%</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    <footer className="border-t border-gray-200 dark:border-gray-800 py-8 bg-white/50 dark:bg-black/20">
+                        <div className="max-w-6xl mx-auto px-4 flex justify-between items-center">
+                            <p className="text-sm text-gray-500 dark:text-gray-500">© 2024 IntiGrade AI. All rights reserved.</p>
+                            <div className="flex gap-4">
+                                <a className="text-gray-400 hover:text-primary transition-colors" href="#"><span className="material-icons-round text-lg">share</span></a>
+                                <a className="text-gray-400 hover:text-primary transition-colors" href="#"><span className="material-icons-round text-lg">mail</span></a>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        // --- Main App Component ---
+
+        const App = () => {
+            return (
+                <MemoryRouter>
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/process" element={<ProcessPage />} />
+                    </Routes>
+                </MemoryRouter>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
