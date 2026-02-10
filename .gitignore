@@ -1,9 +1,17 @@
+<<<<<<< Updated upstream
 # Logs
 logs
+=======
+# node_modules
+node_modules/
+
+# logs
+>>>>>>> Stashed changes
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+<<<<<<< Updated upstream
 pnpm-debug.log*
 lerna-debug.log*
 
@@ -12,11 +20,19 @@ node_modules/
 jspm_packages/
 
 # Build artifacts
+=======
+
+# build
+>>>>>>> Stashed changes
 dist/
 dist-ssr/
 *.local
 
+<<<<<<< Updated upstream
 # Editor directories and files
+=======
+# editor
+>>>>>>> Stashed changes
 .vscode/*
 !.vscode/extensions.json
 .idea/
@@ -27,12 +43,22 @@ dist-ssr/
 *.sln
 *.sw?
 
+<<<<<<< Updated upstream
 # Environment variables
+=======
+# environment
+>>>>>>> Stashed changes
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
+<<<<<<< Updated upstream
 # Build log from previous task
 build_log.txt
+=======
+# agent
+.agent/
+brain/
+>>>>>>> Stashed changes

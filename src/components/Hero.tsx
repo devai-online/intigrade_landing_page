@@ -1,8 +1,11 @@
-import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { ArrowRight, PlayCircle, School, Presentation, Grid, Folder } from 'lucide-react';
 
-const Hero = () => {
+interface HeroProps {
+    onDemoClick: () => void;
+}
+
+const Hero = ({ onDemoClick }: HeroProps) => {
     const { scrollY } = useScroll();
 
     // Smooth out the scroll value for less jittery parallax
@@ -52,10 +55,13 @@ const Hero = () => {
                             The AI grading assistant that bridges the gap between pen and paper. IntiGrade scans, analyzes, and grades physical tests instantly, giving teachers their weekends back.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <Link to="/process" className="group bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-lg text-base font-medium transition-all shadow-xl shadow-primary/25 hover:shadow-primary/40 flex items-center justify-center gap-2">
+                            <button
+                                onClick={onDemoClick}
+                                className="group bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-lg text-base font-medium transition-all shadow-xl shadow-primary/25 hover:shadow-primary/40 flex items-center justify-center gap-2"
+                            >
                                 Grade Your First Exam
                                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                            </Link>
+                            </button>
                             <button className="group px-8 py-4 rounded-lg text-text-main-light dark:text-white border border-gray-300 dark:border-gray-600 hover:border-primary dark:hover:border-primary hover:text-primary dark:hover:text-primary transition-all flex items-center justify-center gap-2 bg-white/50 dark:bg-black/20 backdrop-blur-sm">
                                 <PlayCircle className="w-5 h-5 text-primary" />
                                 Watch Demo
