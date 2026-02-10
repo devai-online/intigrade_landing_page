@@ -38,9 +38,12 @@ const Navigation = ({ variant = 'default' }: NavigationProps) => {
                 <div className="flex items-center gap-4">
                     <ThemeToggle />
                     <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">Home</Link>
-                    <button className="bg-primary hover:bg-primary-hover text-white px-5 py-2 rounded-lg font-medium text-sm transition-all shadow-lg hover:shadow-xl">
-                        Get Started
-                    </button>
+                    <a
+                        href="https://app.intigrade.in/"
+                        className="bg-primary hover:bg-primary-hover text-white px-5 py-2 rounded-lg font-medium text-sm transition-all shadow-lg hover:shadow-xl"
+                    >
+                        Log In
+                    </a>
                 </div>
             </nav>
         );
@@ -63,10 +66,12 @@ const Navigation = ({ variant = 'default' }: NavigationProps) => {
                     </div>
                     <div className="flex items-center space-x-4">
                         <ThemeToggle />
-                        <button className="hidden md:block text-text-main-light dark:text-white hover:text-primary font-medium text-sm transition-colors">Log in</button>
-                        <Link to="/process" className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40">
-                            Start Free Trial
-                        </Link>
+                        <a
+                            href="https://app.intigrade.in/"
+                            className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 transform hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                            Log In
+                        </a>
                     </div>
                 </div>
             </div>
