@@ -1,6 +1,6 @@
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { FileUp, ScanLine, BrainCircuit, LineChart, ArrowDownDouble } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { FileUp, ScanLine, BrainCircuit, LineChart } from 'lucide-react';
 
 const WaterfallSection = () => {
     const containerRef = useRef<HTMLDivElement>(null);

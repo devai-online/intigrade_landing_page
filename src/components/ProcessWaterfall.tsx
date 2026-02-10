@@ -1,11 +1,7 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-    FileUp,
     ScanLine,
     BrainCircuit,
-    LineChart,
-    ArrowDownDouble,
     CheckCircle2,
     MessageSquare,
     TrendingUp
