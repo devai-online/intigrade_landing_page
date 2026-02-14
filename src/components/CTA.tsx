@@ -7,7 +7,7 @@ interface CTAProps {
 const CTA = ({ onDemoClick }: CTAProps) => {
     return (
         <section className="py-24 bg-surface-dark dark:bg-black relative overflow-hidden">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-30 dark:opacity-60"></div>
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
