@@ -51,7 +51,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
                                         </div>
                                         <h2 className="font-serif text-3xl font-bold text-gray-900 dark:text-white mb-4">Request Received!</h2>
                                         <p className="text-gray-500 dark:text-gray-400 text-lg mb-8">
-                                            Thanks for your interest in Intigrade. Our team will contact you within 24 hours to schedule your personalized demo.
+                                            Thanks for your interest in IntiGrade. Our team will contact you within 24 hours to schedule your personalized demo.
                                         </p>
                                         <button
                                             onClick={onClose}
@@ -77,7 +77,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
                                                         type="text"
                                                         required
                                                         className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-900 dark:text-white"
-                                                        placeholder="John Doe"
+                                                        placeholder="Enter your name"
                                                     />
                                                 </div>
                                                 <div>
@@ -88,7 +88,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
                                                         type="text"
                                                         required
                                                         className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-900 dark:text-white"
-                                                        placeholder="Principal / Teacher"
+                                                        placeholder="Enter your designation"
                                                     />
                                                 </div>
                                             </div>
@@ -101,20 +101,20 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
                                                     type="text"
                                                     required
                                                     className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-900 dark:text-white"
-                                                    placeholder="School Name"
+                                                    placeholder="Enter your organization/school name"
                                                 />
                                             </div>
 
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                 <div>
-                                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">E-Mail</label>
                                                     <input
                                                         id="email"
                                                         name="email"
                                                         type="email"
                                                         required
                                                         className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-900 dark:text-white"
-                                                        placeholder="john@example.com"
+                                                        placeholder="Enter your mail ID"
                                                     />
                                                     <ValidationError prefix="Email" field="email" errors={state.errors} className="text-red-500 text-xs mt-1" />
                                                 </div>
@@ -126,7 +126,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
                                                         type="tel"
                                                         required
                                                         className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-900 dark:text-white"
-                                                        placeholder="+1 (555) 000-0000"
+                                                        placeholder="Enter your contact no."
                                                     />
                                                 </div>
                                             </div>
@@ -139,7 +139,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
                                                     type="number"
                                                     required
                                                     className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-900 dark:text-white"
-                                                    placeholder="500+"
+                                                    placeholder="Enter student count"
                                                 />
                                             </div>
 
@@ -150,7 +150,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
                                                     name="questions"
                                                     rows={3}
                                                     className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-gray-900 dark:text-white resize-none"
-                                                    placeholder="How do I get started?"
+                                                    placeholder="What integrations do you provide?"
                                                 ></textarea>
                                                 <ValidationError prefix="Message" field="questions" errors={state.errors} className="text-red-500 text-xs mt-1" />
                                             </div>

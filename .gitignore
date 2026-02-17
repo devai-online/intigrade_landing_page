@@ -37,6 +37,3 @@ dist-ssr/
 # Build log from previous task
 build_log.txt
 
-# Agent
-.agent/
-brain/

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import LogoWhite from '../assets/intigrade.png';
 import LogoBlack from '../assets/intigrade black.png';
 import { ThemeToggle } from './ThemeToggle';
@@ -9,6 +9,7 @@ interface NavigationProps {
 }
 
 const Navigation = ({ variant = 'default' }: NavigationProps) => {
+    const location = useLocation();
     const [logo, setLogo] = useState(LogoWhite);
 
     useEffect(() => {
@@ -60,9 +61,24 @@ const Navigation = ({ variant = 'default' }: NavigationProps) => {
                         <span className="text-2xl font-bold tracking-tight text-text-main-light dark:text-white font-sans">IntiGrade</span>
                     </Link>
                     <div className="hidden md:flex space-x-8 items-center">
-                        <Link className="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium" to="/process">Process</Link>
-                        <a className="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium" href="#">Features</a>
-                        <a className="text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium" href="#">Pricing</a>
+                        <Link
+                            className={`${location.pathname === '/process' ? 'text-primary' : 'text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-primary'} transition-colors text-sm font-medium`}
+                            to="/process"
+                        >
+                            Process
+                        </Link>
+                        <Link
+                            className={`${location.pathname === '/features' ? 'text-primary' : 'text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-primary'} transition-colors text-sm font-medium`}
+                            to="/features"
+                        >
+                            Features
+                        </Link>
+                        <Link
+                            className={`${location.pathname === '/pricing' ? 'text-primary' : 'text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-primary'} transition-colors text-sm font-medium`}
+                            to="/pricing"
+                        >
+                            Pricing
+                        </Link>
                     </div>
                     <div className="flex items-center space-x-4">
                         <ThemeToggle />

@@ -7,6 +7,8 @@ import Features from './components/Features';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
 import ProcessWaterfall from './components/ProcessWaterfall';
+import FeaturesPage from './pages/FeaturesPage';
+import PricingPage from './pages/PricingPage';
 import { ScrollToTop } from './components/ScrollToTop';
 import DemoModal from './components/DemoModal';
 
@@ -37,6 +39,8 @@ function App() {
             <Routes>
                 <Route path="/" element={<HomePage onDemoClick={() => setIsDemoModalOpen(true)} />} />
                 <Route path="/process" element={<ProcessWaterfall />} />
+                <Route path="/features" element={<FeaturesPage onDemoClick={() => setIsDemoModalOpen(true)} />} />
+                <Route path="/pricing" element={<PricingPage onDemoClick={() => setIsDemoModalOpen(true)} />} />
             </Routes>
         </>
     )
