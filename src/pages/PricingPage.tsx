@@ -26,23 +26,23 @@ const PricingPage = ({ onDemoClick }: PricingPageProps) => {
                         {/* Badge */}
 
                         {/* Heading */}
-                        <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-text-main-light dark:text-white mb-6 leading-tight">
+                        <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-text-main-light dark:text-white mb-6 leading-tight">
                             Pricing built for <br />
                             <span className="italic text-primary">your school's scale.</span>
                         </h1>
 
                         {/* Subtext */}
-                        <p className="max-w-3xl mx-auto text-lg md:text-xl text-text-sub-light dark:text-gray-400 font-light leading-relaxed mb-12">
+                        <p className="max-w-3xl mx-auto text-base md:text-xl text-text-sub-light dark:text-gray-400 font-light leading-relaxed mb-12 px-4">
                             We believe that AI-powered grading should be accessible to every institution.
                             Our pricing is not one-size-fits-all; it depends entirely on your school's specific
                             usage basis, student volume, and integration needs.
                         </p>
 
                         {/* Buttons */}
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-16 w-full px-4">
                             <button
                                 onClick={onDemoClick}
-                                className="group relative px-8 py-4 bg-primary hover:bg-primary-hover text-white rounded-full font-bold text-lg transition-all shadow-lg hover:shadow-primary/25 flex items-center gap-3 overflow-hidden"
+                                className="w-full sm:w-auto group relative px-8 py-4 bg-primary hover:bg-primary-hover text-white rounded-full font-bold text-lg transition-all shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-3 overflow-hidden"
                             >
                                 <Mail className="w-5 h-5" />
                                 <span className="relative z-10">Contact Us for Pricing</span>
@@ -50,7 +50,7 @@ const PricingPage = ({ onDemoClick }: PricingPageProps) => {
                             </button>
 
                             <button
-                                className="group px-8 py-4 bg-transparent border border-gray-300 dark:border-white/20 text-text-main-light dark:text-white rounded-full font-medium text-lg transition-all hover:bg-gray-100 dark:hover:bg-white/5 flex items-center gap-3"
+                                className="w-full sm:w-auto group px-8 py-4 bg-transparent border border-gray-300 dark:border-white/20 text-text-main-light dark:text-white rounded-full font-medium text-lg transition-all hover:bg-gray-100 dark:hover:bg-white/5 flex items-center justify-center gap-3"
                             >
                                 <PlayCircle className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-primary transition-colors" />
                                 <span className="relative z-10">Watch Demo</span>

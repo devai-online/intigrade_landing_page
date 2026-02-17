@@ -12,7 +12,7 @@ import Footer from './Footer';
 const ProcessWaterfall = () => {
     return (
         <div className="bg-texture-light dark:bg-texture-dark min-h-screen flex flex-col font-sans text-charcoal dark:text-gray-200 transition-colors duration-300">
-            <Navigation variant="process" />
+            <Navigation variant="default" />
 
             <main className="flex-grow relative overflow-hidden flex flex-col items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
                 <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 dark:bg-primary/5 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
@@ -69,12 +69,13 @@ const ProcessWaterfall = () => {
                         </div>
                     </motion.div>
 
-                    {/* Connector 2 (Branching) */}
+                    {/* Connector 2 (Branching for Desktop, Vertical for Mobile) */}
                     <div className="h-24 w-full max-w-[600px] relative flex justify-center">
                         <div className="h-full w-px bg-gray-300 dark:bg-gray-700 relative overflow-hidden">
                             <div className="absolute inset-0 w-px bg-primary/60 animate-flow-down" style={{ animationDelay: '0.5s' }}></div>
                         </div>
-                        <svg className="absolute top-0 w-full h-full pointer-events-none text-gray-300 dark:text-gray-700" preserveAspectRatio="none">
+                        {/* Desktop Branching SVG */}
+                        <svg className="absolute top-0 w-full h-full pointer-events-none text-gray-300 dark:text-gray-700 hidden md:block" preserveAspectRatio="none">
                             <path d="M300,0 C300,40 100,40 100,100" fill="none" stroke="currentColor" strokeDasharray="4 4" strokeWidth="1" vectorEffect="non-scaling-stroke"></path>
                             <path d="M300,0 C300,40 500,40 500,100" fill="none" stroke="currentColor" strokeDasharray="4 4" strokeWidth="1" vectorEffect="non-scaling-stroke"></path>
                         </svg>
